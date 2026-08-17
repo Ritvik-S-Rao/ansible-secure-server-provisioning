@@ -1,0 +1,4 @@
+*.pem
+.state.env
+vault.yml
+hosts.ini

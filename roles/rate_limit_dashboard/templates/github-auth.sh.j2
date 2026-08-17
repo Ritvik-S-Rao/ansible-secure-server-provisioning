@@ -1,0 +1,29 @@
+#!/bin/bash
+
+
+####################################################################
+# Author : Ritvik S Rao
+# Date : 05 - Aug - 2026
+#
+# Version : v1
+#
+# Description : Authenticating GitHub API using username and token details 
+# Dependencies : Credentials.env
+####################################################################
+
+# GitHub general API URL
+API_URL="https://api.github.com/"
+
+# Securely injected via Ansible Vault
+TOKEN="{{ github_token }}"
+USERNAME="{{ github_username }}"
+
+
+# Function to make a HTTP request to the GitHub API using GET (To get read only access)
+function http_get {
+	local endpoint="$1"
+	local URL="${API_URL}${endpoint}"
+
+	# Send a GET request to the API with authentication details
+	curl -s -u "${USERNAME}:${TOKEN}" "${URL}"
+}

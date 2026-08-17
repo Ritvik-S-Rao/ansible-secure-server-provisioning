@@ -1,0 +1,28 @@
+---
+- name: Allow SSH traffic through the internal firewall
+  ufw:
+    rule: allow
+    port: '22'
+    proto: tcp
+
+
+- name: Allow HTTP traffic through internal firewall
+  ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+
+
+- name: Enable UFW with default deny policy
+  ufw:
+    state: enabled
+    default: deny
+
+
+- name: Disable root login over ssh
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+  notify: Restart SSH

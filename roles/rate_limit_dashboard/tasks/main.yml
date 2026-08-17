@@ -1,0 +1,42 @@
+---
+- name: Install Nginx, curl, and jq
+  apt:
+    name:
+      - nginx
+      - curl
+      - jq
+    state: present
+
+- name: Ensure Nginx is running and enabled on boot
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Deploy the GitHub authentication script
+  template:
+    src: github-auth.sh.j2
+    dest: /usr/local/bin/github-auth.sh
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Deploy the rate-limit generation script
+  template:
+    src: rate-limit.sh.j2
+    dest: /usr/local/bin/rate-limit.sh
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Run the script immediately to generate the first page
+  command: /usr/local/bin/rate-limit.sh
+  args:
+    creates: /var/www/html/index.html
+
+- name: Schedule cron job to run script every 5 minutes
+  cron:
+    name: "Update GitHub Rate Limit Dashboard"
+    minute: "*/5"
+    job: "/usr/local/bin/rate-limit.sh"
+    user: root

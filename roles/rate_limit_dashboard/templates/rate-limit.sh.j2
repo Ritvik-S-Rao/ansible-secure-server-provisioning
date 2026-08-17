@@ -1,0 +1,55 @@
+#!/bin/bash
+
+
+####################################################################
+# Author : Ritvik S Rao
+# Date : 12 - Aug - 2026
+#
+# Version : v2
+#
+# Description : Using GitHub API to display the rate-limit, remaining API calls and the reset time of API calls and dynamically creates a index.html file for a static webpage displaying the same.
+# Dependencies : curl, jq, credentials.env, github-auth.sh
+####################################################################
+
+
+# 1. Source the authentication script from its deployed location
+source /usr/local/bin/github-auth.sh
+
+
+function check_rate_limit {
+    # 2. Fetch the data using the http_get function from the sourced script
+    rate_limit_data=$(http_get "rate_limit")
+    # Extracting variables individually for the HTML template
+    LIMIT=$(echo "$rate_limit_data" | jq -r '.resources.core.limit')
+    REMAINING=$(echo "$rate_limit_data" | jq -r '.resources.core.remaining')
+    RESET_TIME=$(echo "$rate_limit_data" | jq -r '.resources.core.reset | todate')
+
+
+    # Generate HTML file directly in Nginx web folder
+    cat<< EOF> /var/www/html/index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GitHub Rate Limit Dashboard</title>
+    <!-- This single HTML tag refreshes the page every 10 seconds -->
+    <meta http-equiv="refresh" content="10">
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        .metric { font-size: 2em; font-weight: bold; color: #007bff; }
+    </style>
+</head>
+<body>
+    <h1>API Rate Limit Monitor</h1>
+    <p>Remaining Requests: <span class="metric">$REMAINING</span></p>
+    <p>Total Limit: <span class="metric">$LIMIT</span></p>
+    <p>Reset Time: <span class="metric">$RESET_TIME</span></p>
+    <p><small>Last updated: $(date)</small></p>
+</body>
+</html>
+EOF
+}
+
+
+#Main Body Function call
+echo "Check rate limit"
+check_rate_limit

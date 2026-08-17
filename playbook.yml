@@ -1,0 +1,10 @@
+---
+- name: Configure Rate-limit dashbboard
+  hosts: webservers
+  become: yes
+
+
+  roles:
+    - common
+    - security
+    - rate_limit_dashboard
