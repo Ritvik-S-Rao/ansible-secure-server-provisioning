@@ -1,3 +1,5 @@
+> **🌱 Origin:** This project evolves an earlier bash/AWS CLI deployment — [aws-ec2-rate-limit-dashboard](https://github.com/Ritvik-S-Rao/aws-ec2-rate-limit-dashboard) — into idempotent, secrets-safe Ansible roles with per-role hardening and Vault-encrypted credentials.
+
 # Automated AWS Infrastructure & API Dashboard Provisioning
 
 Infrastructure-as-Code project using AWS CLI, Bash, and Ansible to provision and harden EC2 servers, deploying a self-updating GitHub API rate-limit dashboard with Vault-encrypted secrets.
